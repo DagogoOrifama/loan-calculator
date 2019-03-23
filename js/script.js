@@ -4,31 +4,31 @@ document.getElementById('loan-form').addEventListener('submit', function(event){
     event.preventDefault();
 
     // Show results
-    document.getElementById('results').style.display = 'none';
+    document.getElementById('result').style.display = 'none';
     // Hide loader
-    document.getElementById('loading').style.display = 'block';
-    // call function that evaluates the result
-    CalculatedResult();
+    document.getElementById('loader').style.display = 'block';
+    // call function that evaluates the result to display result after 5sec
+    setTimeout(CalculatedResult, 5000);
     
-})
+});
 
 function CalculatedResult(){
     // Get all the data
     const amount = document.getElementById('amount');
     const interest = document.getElementById('interest');
     const years = document.getElementById('years');
-    const monthlyPayments = document.getElementById('monthlyPayments');
+    const monthlyPayment = document.getElementById('monthlyPayment');
     const totalPayment = document.getElementById('totalPayment');
     const totalInterest = document.getElementById('totalInterest');
 
     // convert values to float
-    amount = parseFloat(amount.value);
+    const principal = parseFloat(amount.value);
     const calculatedInterest = parseFloat(interest.value / 100 / 12);
     const calculatedPayments = parseFloat(years.value) * 12;
 
     // Compute montly payment
-    const x = Math.pow(1 + calculatedInterest, calculatedPayments);
-    const monthly = (principal*x* calculatedInterest)/(x-1);
+    const cal = Math.pow(1 + calculatedInterest, calculatedPayments);
+    const monthly = (principal*cal* calculatedInterest)/(cal-1);
 
     // Check if calculated montly value is a finite number
     if(isFinite(monthly)){
@@ -38,10 +38,10 @@ function CalculatedResult(){
         totalPayment.value = (monthly * calculatedPayments).toFixed(2);
         totalInterest.value = ((monthly* calculatedPayments)-principal).toFixed(2);
         
-            // Show results
-        document.getElementById('results').style.display = 'block';
+        // Show results
+        document.getElementById('result').style.display = 'block';
         // Hide loader
-        document.getElementById('loading').style.display = 'none';
+        document.getElementById('loader').style.display = 'none';
     }else{
         displayError('Please check your numbers');
     }
@@ -51,7 +51,28 @@ function CalculatedResult(){
 // Display Error
 function displayError(error){
     // Show results
-    document.getElementById('results').style.display = 'none';
+    document.getElementById('result').style.display = 'none';
     // Hide loader
-    document.getElementById('loading').style.display = 'none';
+    document.getElementById('loader').style.display = 'none';
+
+    // Get element
+    const card = document.querySelector('.card');
+    const heading = document.querySelector('#heading');
+    // Create error div
+    const errorDiv = document.createElement('div');
+    // Add Bootstrap alert class to div
+    errorDiv.className = 'alert alert-danger';
+    // Add error text to be ouputted to the user
+    errorDiv.appendChild(document.createTextNode(error));
+
+    // Specify where to output the error div
+    card.insertBefore(errorDiv, heading);
+    // clear error div after 3s
+    setTimeout(clearErrorDiv, 3000);
+
+}
+
+// Clear error div
+function clearErrorDiv(){
+    document.querySelector('.alert').remove();
 }
